@@ -6,15 +6,25 @@ import { PerfisService } from './services/perfis.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/type-orm.config.service';
 import { ConfigModule } from '@nestjs/config';
+import { AuthenticationController } from './controllers/authentication.controller';
+import { UsuarioService } from './services/usuario.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './services/constans';
 
 @Module({
-  imports: [    
+  imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useClass: TypeOrmConfigService,
-    }),],
-  controllers: [AppController, PerfisController],
-  providers: [AppService, PerfisService],
+    }),
+    JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '60s' },
+    }),
+  ],
+  controllers: [AppController, PerfisController, AuthenticationController],
+  providers: [AppService, PerfisService, UsuarioService, JwtService],
 })
 export class AppModule {}
